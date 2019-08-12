@@ -55,7 +55,7 @@ export class CondNotiPage implements OnInit {
         this.sin_datos = false;
       }
     }), error => {
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 
@@ -97,7 +97,7 @@ export class CondNotiPage implements OnInit {
         this.presentToast();
       }
     }), error => {
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 

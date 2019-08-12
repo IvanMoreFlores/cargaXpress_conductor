@@ -8,6 +8,8 @@ import { ViewChild, ElementRef } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 // import { NativeGeocoder, NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
 import * as moment from 'moment';
+import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
+
 declare var google: any;
 
 @Component({
@@ -30,16 +32,23 @@ export class CondServiSeguimiPage implements OnInit {
   servicio: any = {};
   map: any;
   trackings: any = [];
+  distance: String;
+  duration: String;
   botton: String = 'arrow-dropup';
+  // tslint:disable-next-line: new-parens
   directionsService = new google.maps.DirectionsService;
+  // tslint:disable-next-line: new-parens
   directionsDisplay = new google.maps.DirectionsRenderer;
   conductor: any;
+  latitude: any;
+  longitude: any;
   constructor(private router: Router,
     public service: ServicioService,
     private activatedRoute: ActivatedRoute,
     public loadingController: LoadingController,
     public alertController: AlertController,
     private geolocation: Geolocation,
+    private launchNavigator: LaunchNavigator
     // private nativeGeocoder: NativeGeocoder
   ) {
     this.loadMap();
@@ -56,10 +65,9 @@ export class CondServiSeguimiPage implements OnInit {
       this.servicio = data;
       loading.dismiss();
       this.trazar_ruta();
-      this.click_subSevicios();
     }), error => {
       loading.dismiss();
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 
@@ -67,21 +75,87 @@ export class CondServiSeguimiPage implements OnInit {
     this.category = ev.detail.value;
   }
 
-  click_subSevicios() {
-    // this.service.listar_trackings(this.servicio.order._id).subscribe((data => {
-    //   this.trackings = data.trackings;
-    //   console.log(data.trackings);
-    // }), error => {
-    //   this.respuestaFail(error.json());
-    // });
+  btton_maps() {
+    const options: LaunchNavigatorOptions = {
+      start: '' + this.latitude + ', ' + this.longitude + '',
+      app: this.launchNavigator.APP.GOOGLE_MAPS
+    }
+
+    this.launchNavigator.navigate(this.servicio.order.endPlace, options)
+      .then(
+        success => console.log('Launched navigator'),
+        error => console.log('Error launching navigator', error)
+      );
+  }
+
+  btton_waze() {
+    const options: LaunchNavigatorOptions = {
+      start: '' + this.latitude + ', ' + this.longitude + '',
+      app: this.launchNavigator.APP.WAZE
+    }
+
+    this.launchNavigator.navigate(this.servicio.order.endPlace, options)
+      .then(
+        success => console.log('Launched navigator'),
+        error => console.log('Error launching navigator', error)
+      );
+  }
+
+  async AlertEmergencia() {
+    const alert = await this.alertController.create({
+      header: 'Alerta',
+      message: 'Desea pasar a estado de <strong>EMERGENCIA</strong>',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Si',
+          handler: () => {
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  async AlertEstado() {
+    const alert = await this.alertController.create({
+      header: 'Alerta',
+      message: 'Desea pasar a estado <strong>EN CAMINO</strong>',
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: (blah) => {
+            console.log('Confirm Cancel: blah');
+          }
+        }, {
+          text: 'Si',
+          handler: () => {
+            console.log('Confirm Okay');
+          }
+        }
+      ]
+    });
+    await alert.present();
   }
 
   loadMap() {
-    // const loading = await this.loadingController.create({
-    //   message: 'Dibujando mapa...',
-    // });
-    // await loading.present();
     this.geolocation.getCurrentPosition().then((resp) => {
+      this.latitude = resp.coords.latitude;
+      this.longitude = resp.coords.longitude;
+      console.log('' + resp.coords.latitude + ', ' + resp.coords.longitude + '');
+      console.log(resp.coords.latitude);
+      console.log(resp.coords.longitude);
       const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
       const mapOptions = {
         center: latLng,
@@ -94,7 +168,6 @@ export class CondServiSeguimiPage implements OnInit {
       };
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
-        // loading.dismiss();
       });
       this.directionsDisplay.setMap(this.map);
       this.directionsDisplay.setOptions({
@@ -105,9 +178,40 @@ export class CondServiSeguimiPage implements OnInit {
         }
       });
     }).catch((error) => {
-      // loading.dismiss();
       console.log('Error getting location', error);
     });
+  }
+
+  addMarker(opcion) {
+    let icons;
+    let pos;
+    let title;
+    if (opcion === 1) {
+      pos = {
+        lat: this.servicio.order.endLocation.coordinates[1],
+        lng: this.servicio.order.endLocation.coordinates[0],
+      };
+      icons = 'assets/img/llegada.png';
+      title = this.servicio.order.endPlace;
+    } else {
+      pos = {
+        lat: this.servicio.order.initLocation.coordinates[1],
+        lng: this.servicio.order.initLocation.coordinates[0],
+      };
+      icons = 'assets/img/partida.png';
+      title = this.servicio.order.initPlace;
+    }
+    // console.log(this.map);
+
+    // console.log(pos);
+    const marker = new google.maps.Marker({
+      position: pos, // marker position
+      // map: this.map,
+      title: 'Hello World!',
+      icon: icons // custom image
+    });
+    marker.setMap(this.map);
+    // this.map.addMarker(marker);
   }
 
   async trazar_ruta() {
@@ -122,8 +226,12 @@ export class CondServiSeguimiPage implements OnInit {
       destination: end,
       travelMode: 'DRIVING'
     }, (response, status) => {
-      console.log(response);
+      // console.log(response);
       if (status === 'OK') {
+        this.addMarker(0);
+        this.addMarker(1);
+        this.duration = response.routes[0].legs[0].duration.text;
+        this.distance = response.routes[0].legs[0].distance.text;
         this.directionsDisplay.setDirections(response);
         loading.dismiss();
       } else {
@@ -134,13 +242,15 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   changedState(ev) {
-    console.log(ev);
+    // console.log(ev);
     if (ev === 0) {
       this.botton = 'arrow-dropup';
       return false;
+      // tslint:disable-next-line: align
     } if (ev === 1) {
       this.botton = 'remove';
       return false;
+      // tslint:disable-next-line: align
     } if (ev === 2) {
       this.botton = 'arrow-dropdown';
       return false;
@@ -148,7 +258,7 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   async respuestaFail(error: any) {
-    console.log(error);
+    // console.log(error);
     if (error.msg) {
       const alert = await this.alertController.create({
         header: 'Error',
@@ -168,17 +278,19 @@ export class CondServiSeguimiPage implements OnInit {
 
   agregar_chofer(chofer) {
     this.conductor = chofer;
-    console.log(chofer);
+    // console.log(chofer);
   }
 
   enableDashScroll() {
-    console.log('enableDashScroll');
+    // console.log('enableDashScroll');
     this.disableDrag = false;
   }
 
   disableDashScroll() {
-    console.log('disableDashScroll');
+    // console.log('disableDashScroll');
     this.disableDrag = true;
   }
+
+
 
 }

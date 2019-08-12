@@ -34,7 +34,7 @@ export class CondPerfilPage implements OnInit {
       this.perfil = data;
       console.log(data);
     }), error => {
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 

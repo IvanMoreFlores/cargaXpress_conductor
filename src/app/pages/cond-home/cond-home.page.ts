@@ -75,7 +75,7 @@ export class CondHomePage implements OnInit {
         this.sin_datos = !this.sin_datos;
       }
     }), error => {
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 
@@ -124,7 +124,7 @@ export class CondHomePage implements OnInit {
         this.presentToast();
       }
     }), error => {
-      this.respuestaFail(error.json());
+      this.respuestaFail(error.error);
     });
   }
 
