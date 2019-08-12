@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ServicioService } from '../../services/servicio/servicio.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { LoadingController, AlertController } from '@ionic/angular';
+import { LoadingController, AlertController, Platform } from '@ionic/angular';
 import { DrawerState } from '../../modules/ion-bottom-drawer/drawer-state';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
@@ -42,13 +42,15 @@ export class CondServiSeguimiPage implements OnInit {
   conductor: any;
   latitude: any;
   longitude: any;
+  markers: any[] = [];
   constructor(private router: Router,
     public service: ServicioService,
     private activatedRoute: ActivatedRoute,
     public loadingController: LoadingController,
     public alertController: AlertController,
     private geolocation: Geolocation,
-    private launchNavigator: LaunchNavigator
+    private launchNavigator: LaunchNavigator,
+    public platform: Platform
     // private nativeGeocoder: NativeGeocoder
   ) {
     this.loadMap();
@@ -56,6 +58,10 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   async ngOnInit() {
+    this.platform.ready().then(() => this.loadMap());
+  }
+
+  async listar_servicio() {
     const loading = await this.loadingController.create({
       message: 'Espere por favor...'
     });
@@ -150,36 +156,41 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   loadMap() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      this.latitude = resp.coords.latitude;
-      this.longitude = resp.coords.longitude;
-      console.log('' + resp.coords.latitude + ', ' + resp.coords.longitude + '');
-      console.log(resp.coords.latitude);
-      console.log(resp.coords.longitude);
-      const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      const mapOptions = {
-        center: latLng,
-        zoom: 15,
-        mapTypeControl: false,
-        zoomControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      };
-      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-      this.map.addListener('tilesloaded', () => {
-      });
-      this.directionsDisplay.setMap(this.map);
-      this.directionsDisplay.setOptions({
-        suppressMarkers: true, polylineOptions: {
-          // strokeWeight: 4,
-          // strokeOpacity: 4,
-          strokeColor: 'black'
-        }
-      });
-    }).catch((error) => {
-      console.log('Error getting location', error);
-    });
+
+    
+
+
+    // this.geolocation.getCurrentPosition().then((resp) => {
+    //   this.latitude = resp.coords.latitude;
+    //   this.longitude = resp.coords.longitude;
+    //   console.log('' + resp.coords.latitude + ', ' + resp.coords.longitude + '');
+    //   console.log(resp.coords.latitude);
+    //   console.log(resp.coords.longitude);
+    //   const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
+    //   const mapOptions = {
+    //     center: latLng,
+    //     zoom: 15,
+    //     mapTypeControl: false,
+    //     zoomControl: false,
+    //     streetViewControl: false,
+    //     fullscreenControl: false,
+    //     maxZoom: 15,
+    //     mapTypeId: google.maps.MapTypeId.ROADMAP
+    //   };
+    //   this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+    //   this.map.addListener('tilesloaded', () => {
+    //   });
+    //   this.directionsDisplay.setMap(this.map);
+    //   this.directionsDisplay.setOptions({
+    //     suppressMarkers: true, polylineOptions: {
+    //       // strokeWeight: 4,
+    //       // strokeOpacity: 4,
+    //       strokeColor: 'black'
+    //     }
+    //   });
+    // }).catch((error) => {
+    //   console.log('Error getting location', error);
+    // });
   }
 
   addMarker(opcion) {
@@ -210,6 +221,25 @@ export class CondServiSeguimiPage implements OnInit {
       title: 'Hello World!',
       icon: icons // custom image
     });
+    // marker.clear();
+    marker.setMap(this.map);
+    // this.map.addMarker(marker);
+  }
+
+  addMarker_gps(coords) {
+    const pos = {
+      lat: coords.latitude,
+      lng: coords.longitude,
+    };
+
+    // console.log(pos);
+    const marker = new google.maps.Marker({
+      position: pos, // marker position
+      // map: this.map,
+      title: 'Hello World!',
+      icon: 'assets/img/driver.png' // custom image
+    });
+    marker.setMap(null);
     marker.setMap(this.map);
     // this.map.addMarker(marker);
   }
@@ -228,6 +258,12 @@ export class CondServiSeguimiPage implements OnInit {
     }, (response, status) => {
       // console.log(response);
       if (status === 'OK') {
+        const watch = this.geolocation.watchPosition();
+        watch.subscribe((data) => {
+          console.log('watchPosition');
+          this.addMarker_gps(data.coords);
+          console.log(data);
+        });
         this.addMarker(0);
         this.addMarker(1);
         this.duration = response.routes[0].legs[0].duration.text;
