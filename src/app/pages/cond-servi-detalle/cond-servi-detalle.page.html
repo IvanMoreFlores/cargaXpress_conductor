@@ -1,0 +1,92 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-buttons slot="start">
+      <ion-back-button color="light" defaultHref="/" text="">
+      </ion-back-button>
+    </ion-buttons>
+    <ion-title color="light">Detalle de Servicio</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label position="stacked">Categoría del pedido</ion-label>
+    <ion-input type="text" readonly>{{ servicio?.order?.category?.name }}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Subcategoría del pedido</ion-label>
+    <ion-input type="text" readonly>{{ servicio?.order?.subcategory?.name }}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Tipo de pedido</ion-label>
+    <ion-input type="text" readonly *ngIf="servicio?.order?.type == 1">Subasta</ion-input>
+    <ion-input type="text" readonly *ngIf="servicio?.order?.type == 2">Precio ofertado</ion-input>
+    <ion-input type="text" readonly *ngIf="servicio?.order?.type == 3">Precio sugerido</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Precio de pedido</ion-label>
+    <ion-input type="text" readonly>{{ servicio?.order?.price }}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Lugar de inicio</ion-label>
+    <ion-input type="text" readonly>{{ servicio?.order?.initPlace }}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Lugar de destino</ion-label>
+    <ion-input type="text" readonly>{{ servicio?.order?.endPlace }}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Fecha de fin</ion-label>
+    <ion-input type="text" readonly>{{devolver_fecha(servicio?.order?.endDate)}}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Fecha máxima de entrega</ion-label>
+    <ion-input type="text" readonly>{{devolver_fecha(servicio?.order?.deliveryMaxDate)}}</ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="stacked">Hora máxima de entrega</ion-label>
+    <ion-input type="text" readonly>{{servicio?.order?.deliveryMaxHour}}</ion-input>
+  </ion-item>
+  <ion-item>
+    <hr class="middle-line">
+  </ion-item>
+  <ion-item>
+    <div text-center><b>Características del punto de recojo de la carga</b></div>
+  </ion-item>
+  <div *ngFor="let pregunta of servicio?.order?.receptionAnswers">
+    <ion-item>
+      <ion-label position="stacked">{{ pregunta.title }}</ion-label>
+      <ion-input type="text" readonly>{{ pregunta.answer }}</ion-input>
+    </ion-item>
+  </div>
+  <ion-item>
+    <hr class="middle-line">
+  </ion-item>
+  <ion-item>
+    <div text-center><b>Características de los elementos</b></div>
+  </ion-item>
+  <div *ngFor="let pregunta of servicio?.order?.elements[0]?.answers">
+    <ion-item>
+      <ion-label position="stacked">{{ pregunta.title }}</ion-label>
+      <ion-input type="text" readonly>{{ pregunta.answer }}</ion-input>
+    </ion-item>
+  </div>
+  <ion-item>
+    <hr class="middle-line">
+  </ion-item>
+  <ion-item>
+    <div text-center><b>Características del punto final de llegada</b></div>
+  </ion-item>
+  <div *ngFor="let pregunta of servicio?.order?.destinationAnswers">
+    <ion-item>
+      <ion-label position="stacked">{{ pregunta.title }}</ion-label>
+      <ion-input type="text" readonly>{{ pregunta.answer }}</ion-input>
+    </ion-item>
+  </div>
+  <div padding>
+    <ion-button expand="full" fill="solid" color="favorite" (click)="click_seguimiento(servicio?._id)">Seguimiento
+    </ion-button>
+  </div>
+
+
+</ion-content>

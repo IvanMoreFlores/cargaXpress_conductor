@@ -1,0 +1,66 @@
+<ion-content padding class="center">
+  <form [formGroup]="formularioUsuario" novalidate style="margin-top: 10%;">
+    <ion-grid style="width: 100%">
+      <ion-row>
+        <ion-col text-center>
+          <img src="assets/img/logo.png" width="50%">
+          <p style="font-size: 15px">Completa los siguientes datos para ingresar</p>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item no-lines>
+            <ion-label position="stacked" color="dark">Correo</ion-label>
+            <ion-input formControlName="email" [(ngModel)]="data.email" placeholder="example@gmail.com" type="email">
+            </ion-input>
+            <div style="margin: 0px;padding-bottom: 5px"
+              *ngIf="formularioUsuario.get('email').errors && formularioUsuario.get('email').dirty">
+              <ion-label position="stacked" no-padding style="margin: 0px;" color="danger" ion-text
+                *ngIf="formularioUsuario.get('email').hasError('required')">*Se requiere campo</ion-label>
+              <ion-label position="stacked" no-padding style="margin: 0px;" color="danger" ion-text
+                *ngIf="formularioUsuario.get('email').hasError('email')">*No es un email</ion-label>
+            </div>
+          </ion-item>
+
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col>
+          <ion-item>
+            <ion-label position="stacked">Contraseña</ion-label>
+            <ion-input formControlName="password" [(ngModel)]="data.password" placeholder="**********" [type]="type">
+              <ion-buttons style="position: absolute;right: 0.5rem;">
+                <ion-button (click)="type_password()" color="dark">
+                  <ion-icon [name]="icono"></ion-icon>
+                </ion-button>
+              </ion-buttons>
+            </ion-input>
+            <div style="margin: 0px;padding-bottom: 5px"
+              *ngIf="formularioUsuario.get('password').errors && formularioUsuario.get('password').dirty">
+              <ion-label position="stacked" style="margin: 0px;" color="danger" ion-text
+                *ngIf="formularioUsuario.get('password').hasError('required')">*Se requiere campo</ion-label>
+              <ion-label position="stacked" style="margin: 0px;" color="danger" ion-text
+                *ngIf="formularioUsuario.get('password').hasError('minlength')">*Minimo 8 caracteres</ion-label>
+            </div>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row (click)="recover()" style="padding-left: 10px;">
+        <ion-col style="display: flex;justify-content: flex-start;align-items: flex-end;">
+          <p style="font-size: 15px;margin: 5px">¿Olvidaste tu contraseña? <u>Recuperar.</u></p>
+        </ion-col>
+      </ion-row>
+      <ion-row padding>
+        <ion-col size="2">
+        </ion-col>
+        <ion-col size="8" text-center>
+          <ion-button expand="full" (click)="login()" [disabled]="!formularioUsuario.valid" color="dark">Ingresar
+          </ion-button>
+        </ion-col>
+        <ion-col size="2">
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+  </form>
+</ion-content>

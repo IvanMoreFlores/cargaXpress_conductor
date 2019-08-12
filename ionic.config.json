@@ -1,5 +1,7 @@
 {
   "name": "CargaXpress_conductor",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }

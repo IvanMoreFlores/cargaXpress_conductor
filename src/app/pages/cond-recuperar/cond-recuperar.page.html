@@ -1,0 +1,36 @@
+<ion-header no-border>
+  <ion-toolbar>
+    <ion-buttons slot="end">
+      <ion-back-button text="" icon="close"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding fullscreen>
+  <ion-grid>
+
+    <ion-row padding>
+      <ion-col text-center>
+        <p style="font-size: 25px;margin: 0px"><b>Recuperar contraseña</b></p>
+        <p style="font-size: 15px;margin: 0px">Ingresa tu correo electronico</p>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-item no-lines>
+          <ion-label position="stacked">Correo</ion-label>
+          <ion-input [(ngModel)]="corre" placeholder="example@gmail.com" type="text"></ion-input>
+        </ion-item>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-col text-center>
+        <ion-button (click)="recuperar_contra()" color="dark">Recuperar</ion-button>
+      </ion-col>
+    </ion-row>
+
+  </ion-grid>
+
+</ion-content>

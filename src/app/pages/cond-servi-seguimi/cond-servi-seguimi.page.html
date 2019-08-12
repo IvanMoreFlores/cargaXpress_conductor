@@ -1,0 +1,160 @@
+<ion-header>
+    <ion-toolbar color="favorite">
+      <ion-buttons slot="start">
+        <ion-back-button color="light" defaultHref="/" text="">
+        </ion-back-button>
+      </ion-buttons>
+      <ion-title color="light">Detalle de servicio</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content>
+    <div #map id="map"></div>
+  </ion-content>
+  <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
+    [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop"
+    (stateChange)="changedState($event)">
+    <div class="drawer-content" style='height:100%'>
+      <div (touchstart)='enableDashScroll()' (touchend)='disableDashScroll()' class="ion-padding" text-center
+        style="background-color: #30205d">
+        <ion-icon slot="icon-only" color="light" [name]="botton"></ion-icon>
+      </div>
+      <ion-toolbar>
+        <ion-segment no-border-top [(ngModel)]="category" scrollable (ionChange)="segmentChanged($event)">
+          <ion-segment-button value="Informacion" checked>
+            Información
+          </ion-segment-button>
+          <ion-segment-button value="SubServicios">
+            Sub servicios
+          </ion-segment-button>
+          <ion-segment-button value="Chofer">
+            Chofer
+          </ion-segment-button>
+          <ion-segment-button value="Chat">
+            Chat
+          </ion-segment-button>
+        </ion-segment>
+      </ion-toolbar>
+  
+      <div [ngSwitch]="category">
+        <div *ngSwitchCase="'Informacion'">
+          <ion-card *ngIf="servicio?.order">
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Punto de partida</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{ servicio?.order?.initPlace }}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle> <b style="color: #30205d">Punto de llegada</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{ servicio?.order?.endPlace }}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </div>
+      </div>
+  
+  
+  
+      <div [ngSwitch]="category">
+        <div *ngSwitchCase="'SubServicios'">
+          <ion-card *ngFor="let item of trackings" class="ion-activatable" (click)="agregar_chofer(item.driver)">
+            <ion-ripple-effect></ion-ripple-effect>
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-title>{{ item?.driver?.name }} {{ item?.driver?.lastName}}</ion-card-title>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Código</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{ item?._id }}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Estado del servicio</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{ item?.status }}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </div>
+      </div>
+  
+      <div [ngSwitch]="category" scrollY="true" id="myScrollDiv">
+        <div *ngSwitchCase="'Chofer'" text-center>
+          <ion-card *ngIf="conductor">
+            <ion-grid fixed>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-title>{{conductor.name}} {{conductor.lastName}}</ion-card-title>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Tipo de brevete</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{conductor.breveteCategory}}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Número de brevete</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{conductor.breveteCode}}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Tipo de documento</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{conductor.documentType[0].name}}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Número de documento</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{conductor.documentCode}}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">N° de celular</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>{{conductor.cellphone}}</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+              <ion-row>
+                <ion-col size="12">
+                  <ion-card-subtitle><b style="color: #30205d">Seguimiento Satelital</b></ion-card-subtitle>
+                </ion-col>
+                <ion-col size="12">
+                  <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+          </ion-card>
+        </div>
+      </div>
+  
+    </div>
+  </ion-bottom-drawer>

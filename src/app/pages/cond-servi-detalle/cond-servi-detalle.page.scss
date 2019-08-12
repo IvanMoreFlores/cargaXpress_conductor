@@ -1,0 +1,24 @@
+ion-content {
+  --ion-background-color: #ececec;
+  ion-item {
+    --highlight-color-valid: transparent;
+    --highlight-color-invalid: transparent;
+    --highlight-color-focused: transparent;
+    --border-color: transparent;
+  }
+  ion-input {
+    --background: white;
+    padding: 5px !important;
+    margin-top: 10px !important;
+    border: 2px solid #30205d !important;
+  }
+  //  ion-item .has-focus {
+  //     border: 2px solid #30205d !important;
+  //     }
+
+  hr.middle-line {
+    border: 2px dashed grey;
+    width: 100%;
+    margin: 20px 0;
+  }
+}

@@ -1,0 +1,117 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <div>
+      <img style="max-width: 100% !important;border: 0 !important;margin-top: 5px !important;margin-left: 10px"
+        src="assets/img/logo02.png" width="20%">
+    </div>
+    <ion-buttons slot="end">
+      <ion-button (click)="openFirst()" color="light">
+        <ion-icon slot="icon-only" name="menu"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-grid>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <img *ngIf="!perfil.picture" width="25%" src="assets/img/user.png" alt="">
+        <img *ngIf="perfil.picture" width="25%" [src]="perfil.picture " alt="">
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.name }} {{ perfil.lastName }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Perú</ion-card-subtitle>
+      </ion-col>
+      <ion-col text-center>
+        <ion-card-subtitle>{{ perfil.documentCode }}</ion-card-subtitle>
+      </ion-col>
+      <ion-col text-center *ngIf="perfil.status === 1">
+        <ion-card-subtitle>(Activo)</ion-card-subtitle>
+      </ion-col>
+      <ion-col text-center *ngIf="perfil.status === 2">
+        <ion-card-subtitle>(Suspendido)</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Tipo de documento</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.documentType?.name }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Número de documento</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.documentCode }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Categoria de brevete</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.breveteCategory }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Número de brevete</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.breveteCode }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Número de celular</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.cellphone }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+    <hr />
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-subtitle>Email</ion-card-subtitle>
+      </ion-col>
+    </ion-row>
+    <ion-row no-padding>
+      <ion-col text-center>
+        <ion-card-title>{{ perfil.email }}</ion-card-title>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="dark" (click)="edit_perfil(perfil._id)">
+      <ion-icon name="create"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
