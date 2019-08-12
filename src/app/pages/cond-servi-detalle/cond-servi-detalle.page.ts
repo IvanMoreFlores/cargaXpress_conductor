@@ -36,7 +36,7 @@ export class CondServiDetallePage implements OnInit {
   }
 
   click_seguimiento(id: any) {
-    this.router.navigate(['/servicio-seguimiento', id]);
+    this.router.navigate(['/cond-servi-seguimi', id]);
     // this.router.navigate(['/pedido-detalle', id]);
   }
 

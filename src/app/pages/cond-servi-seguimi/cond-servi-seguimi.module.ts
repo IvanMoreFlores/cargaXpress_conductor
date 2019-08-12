@@ -6,6 +6,10 @@ import { Routes, RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 
 import { CondServiSeguimiPage } from './cond-servi-seguimi.page';
+import { ComponentsModule } from '../../components/components.module';
+import { IonBottomDrawerModule } from 'ion-bottom-drawer';
+
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 const routes: Routes = [
   {
@@ -19,7 +23,12 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
+    ComponentsModule,
+    IonBottomDrawerModule,
     RouterModule.forChild(routes)
+  ],
+  providers: [
+    Geolocation
   ],
   declarations: [CondServiSeguimiPage]
 })

@@ -11,7 +11,7 @@ const routes: Routes = [
   { path: 'cond-perfil', loadChildren: './pages/cond-perfil/cond-perfil.module#CondPerfilPageModule' },
   { path: 'cond-splash', loadChildren: './pages/cond-splash/cond-splash.module#CondSplashPageModule' },
   { path: 'cond-servi-detalle/:id', loadChildren: './pages/cond-servi-detalle/cond-servi-detalle.module#CondServiDetallePageModule' },
-  { path: 'cond-servi-seguimi', loadChildren: './pages/cond-servi-seguimi/cond-servi-seguimi.module#CondServiSeguimiPageModule' },
+  { path: 'cond-servi-seguimi/:id', loadChildren: './pages/cond-servi-seguimi/cond-servi-seguimi.module#CondServiSeguimiPageModule' },
 ];
 
 @NgModule({

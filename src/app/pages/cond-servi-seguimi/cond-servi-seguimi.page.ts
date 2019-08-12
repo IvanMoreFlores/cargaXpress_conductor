@@ -41,7 +41,8 @@ export class CondServiSeguimiPage implements OnInit {
     public alertController: AlertController,
     private geolocation: Geolocation,
     // private nativeGeocoder: NativeGeocoder
-    ) {
+  ) {
+    this.loadMap();
     console.log(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
@@ -54,7 +55,8 @@ export class CondServiSeguimiPage implements OnInit {
       console.log(data);
       this.servicio = data;
       loading.dismiss();
-      this.loadMap();
+      this.trazar_ruta();
+      this.click_subSevicios();
     }), error => {
       loading.dismiss();
       this.respuestaFail(error.json());
@@ -74,11 +76,11 @@ export class CondServiSeguimiPage implements OnInit {
     // });
   }
 
-  async loadMap() {
-    const loading = await this.loadingController.create({
-      message: 'Dibujando mapa...',
-    });
-    await loading.present();
+  loadMap() {
+    // const loading = await this.loadingController.create({
+    //   message: 'Dibujando mapa...',
+    // });
+    // await loading.present();
     this.geolocation.getCurrentPosition().then((resp) => {
       const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
       const mapOptions = {
@@ -92,13 +94,18 @@ export class CondServiSeguimiPage implements OnInit {
       };
       this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
       this.map.addListener('tilesloaded', () => {
-        loading.dismiss();
-        this.trazar_ruta();
-        this.click_subSevicios();
+        // loading.dismiss();
       });
       this.directionsDisplay.setMap(this.map);
+      this.directionsDisplay.setOptions({
+        suppressMarkers: true, polylineOptions: {
+          // strokeWeight: 4,
+          // strokeOpacity: 4,
+          strokeColor: 'black'
+        }
+      });
     }).catch((error) => {
-      loading.dismiss();
+      // loading.dismiss();
       console.log('Error getting location', error);
     });
   }
@@ -115,6 +122,7 @@ export class CondServiSeguimiPage implements OnInit {
       destination: end,
       travelMode: 'DRIVING'
     }, (response, status) => {
+      console.log(response);
       if (status === 'OK') {
         this.directionsDisplay.setDirections(response);
         loading.dismiss();

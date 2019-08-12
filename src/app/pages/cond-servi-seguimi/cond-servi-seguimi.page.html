@@ -1,5 +1,5 @@
 <ion-header>
-    <ion-toolbar color="favorite">
+    <ion-toolbar color="dark">
       <ion-buttons slot="start">
         <ion-back-button color="light" defaultHref="/" text="">
         </ion-back-button>
@@ -11,12 +11,13 @@
   <ion-content>
     <div #map id="map"></div>
   </ion-content>
+  
   <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
     [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop"
     (stateChange)="changedState($event)">
     <div class="drawer-content" style='height:100%'>
       <div (touchstart)='enableDashScroll()' (touchend)='disableDashScroll()' class="ion-padding" text-center
-        style="background-color: #30205d">
+        style="background-color: #222428">
         <ion-icon slot="icon-only" color="light" [name]="botton"></ion-icon>
       </div>
       <ion-toolbar>
@@ -42,7 +43,7 @@
             <ion-grid fixed>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Punto de partida</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Punto de partida</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{ servicio?.order?.initPlace }}</ion-card-subtitle>
@@ -50,7 +51,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle> <b style="color: #30205d">Punto de llegada</b></ion-card-subtitle>
+                  <ion-card-subtitle> <b style="color: #222428">Punto de llegada</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{ servicio?.order?.endPlace }}</ion-card-subtitle>
@@ -75,7 +76,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Código</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Código</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{ item?._id }}</ion-card-subtitle>
@@ -83,7 +84,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Estado del servicio</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Estado del servicio</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{ item?.status }}</ion-card-subtitle>
@@ -105,7 +106,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Tipo de brevete</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Tipo de brevete</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{conductor.breveteCategory}}</ion-card-subtitle>
@@ -113,7 +114,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Número de brevete</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Número de brevete</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{conductor.breveteCode}}</ion-card-subtitle>
@@ -121,7 +122,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Tipo de documento</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Tipo de documento</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{conductor.documentType[0].name}}</ion-card-subtitle>
@@ -129,7 +130,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Número de documento</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Número de documento</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{conductor.documentCode}}</ion-card-subtitle>
@@ -137,7 +138,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">N° de celular</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">N° de celular</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>{{conductor.cellphone}}</ion-card-subtitle>
@@ -145,7 +146,7 @@
               </ion-row>
               <ion-row>
                 <ion-col size="12">
-                  <ion-card-subtitle><b style="color: #30205d">Seguimiento Satelital</b></ion-card-subtitle>
+                  <ion-card-subtitle><b style="color: #222428">Seguimiento Satelital</b></ion-card-subtitle>
                 </ion-col>
                 <ion-col size="12">
                   <ion-card-subtitle>Awesome Subtitle</ion-card-subtitle>
