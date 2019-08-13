@@ -112,6 +112,7 @@ export class CondNotiPage implements OnInit {
   async respuestaFail(error: any) {
     if (error.msg) {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: error.msg,
         buttons: ['OK']
@@ -119,6 +120,7 @@ export class CondNotiPage implements OnInit {
       await alert.present();
     } else {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: 'Falla al intentar comunicarse con el servidor',
         buttons: ['OK']

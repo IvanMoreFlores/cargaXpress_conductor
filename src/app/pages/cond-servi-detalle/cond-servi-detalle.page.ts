@@ -11,7 +11,7 @@ import * as moment from 'moment';
   styleUrls: ['./cond-servi-detalle.page.scss'],
 })
 export class CondServiDetallePage implements OnInit {
-  servicio: any = {};
+  tracking: any = {};
   constructor(private router: Router,
     public service: ServicioService,
     private activatedRoute: ActivatedRoute,
@@ -25,9 +25,9 @@ export class CondServiDetallePage implements OnInit {
       message: 'Espere por favor...'
     });
     await loading.present();
-    this.service.listar_servicio_id(this.activatedRoute.snapshot.paramMap.get('id')).subscribe((data => {
+    this.service.listar_tracking_id(this.activatedRoute.snapshot.paramMap.get('id')).subscribe((data => {
       console.log(data);
-      this.servicio = data;
+      this.tracking = data;
       loading.dismiss();
     }), error => {
       loading.dismiss();
@@ -48,6 +48,7 @@ export class CondServiDetallePage implements OnInit {
     console.log(error);
     if (error.msg) {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: error.msg,
         buttons: ['OK']
@@ -55,6 +56,7 @@ export class CondServiDetallePage implements OnInit {
       await alert.present();
     } else {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: 'Falla al intentar comunicarse con el servidor',
         buttons: ['OK']

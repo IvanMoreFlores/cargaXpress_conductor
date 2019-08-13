@@ -1,34 +1,31 @@
-ion-content {
-    #map {
-      width: 100%;
-      height: 100%;
-      // border: 2px solid #30205d !important;
-    }
+#map_canvas {
+  width: 100%;
+  height: 100%;
+  // border: 2px solid #30205d !important;
+}
+ion-card {
+  --background: white;
+  border-left: 5px solid #000000 !important;
+}
+
+#myScrollDiv {
+  height: auto !important;
+}
+
+div[scrollx="true"],
+div[scrolly="true"] {
+  position: relative;
+  overflow: hidden;
+
+  ::-webkit-scrollbar {
+    display: none;
   }
-  ion-card {
-    --background: white;
-    border-left: 5px solid #000000 !important;
-  }
-  
-  #myScrollDiv {
-    height: auto !important;
-    
-  }
-  
-  div[scrollx="true"],
-  div[scrolly="true"] {
-    position: relative;
-    overflow: hidden;
-  
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  }
-  
-  div[scrollx="true"] {
-    overflow-x: auto;
-  }
-  
-  div[scrolly="true"] {
-    overflow-y: auto;
-  }
+}
+
+div[scrollx="true"] {
+  overflow-x: auto;
+}
+
+div[scrolly="true"] {
+  overflow-y: auto;
+}

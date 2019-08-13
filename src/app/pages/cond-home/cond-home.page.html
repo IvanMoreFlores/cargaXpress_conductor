@@ -25,26 +25,27 @@
   </div>
 
   <div *ngIf="con_datos">
-    <ion-card (click)="detalle_servicio(servicio._id)" class="ion-activatable" *ngFor="let servicio of servicios" no-padding style="padding-left: 5px">
+    <ion-card (click)="detalle_servicio(tracking._id)" class="ion-activatable" *ngFor="let tracking of trackings"
+      no-padding style="padding-left: 5px">
       <ion-ripple-effect></ion-ripple-effect>
       <ion-grid style="height: 100%">
         <ion-row style="height: 100%; flex-direction: row">
           <ion-col style="height: 100%;" size="6" align-self-center>
-            <div style="font-size: 20px;color: black"><b>{{ servicio.code}}</b></div>
+            <div style="font-size: 20px;color: black"><b>{{ tracking?.service?.code}}</b></div>
           </ion-col>
         </ion-row>
         <ion-row style="height: 100%; flex-direction: row">
           <ion-col size="12">
             <div><b style="color: black">Fecha maxima de entrega</b></div>
-            <div>{{ devolver_fecha(servicio.order.deliveryMaxDate) }}</div>
+            <div>{{ devolver_fecha(tracking?.service?.order?.deliveryMaxDate) }}</div>
           </ion-col>
           <ion-col size="12">
             <div><b style="color: black">Punto de inicio</b></div>
-            <div>{{ servicio.order.initPlace }}</div>
+            <div>{{ tracking?.service?.order.initPlace }}</div>
           </ion-col>
           <ion-col size="12">
             <div><b style="color: black">Punto de llegada</b></div>
-            <div>{{ servicio.order.endPlace }}</div>
+            <div>{{ tracking?.service?.order.endPlace }}</div>
           </ion-col>
         </ion-row>
       </ion-grid>

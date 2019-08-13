@@ -74,6 +74,7 @@ export class CondRecuperarPage implements OnInit {
 
   async presentAlert() {
     const alert = await this.alertController.create({
+      backdropDismiss: false,
       header: 'Error',
       subHeader: 'Campo incompleto',
       message: 'Ingrese su correo',

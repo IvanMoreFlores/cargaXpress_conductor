@@ -6,9 +6,16 @@ import { LoadingController, AlertController, Platform } from '@ionic/angular';
 import { DrawerState } from '../../modules/ion-bottom-drawer/drawer-state';
 import { ViewChild, ElementRef } from '@angular/core';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
-// import { NativeGeocoder, NativeGeocoderOptions, NativeGeocoderResult } from '@ionic-native/native-geocoder/ngx';
-import * as moment from 'moment';
 import { LaunchNavigator, LaunchNavigatorOptions } from '@ionic-native/launch-navigator/ngx';
+import { FirebaseService } from '../../services/firebase/firebase.service';
+import {
+  GoogleMaps,
+  GoogleMap,
+  GoogleMapsEvent,
+  LatLng,
+  MarkerOptions
+} from '@ionic-native/google-maps';
+import { Storage } from '@ionic/storage';
 
 declare var google: any;
 
@@ -18,7 +25,7 @@ declare var google: any;
   styleUrls: ['./cond-servi-seguimi.page.scss'],
 })
 export class CondServiSeguimiPage implements OnInit {
-
+  map: GoogleMap;
   @ViewChild('map', { static: false }) mapElement: ElementRef;
   public category: String = 'Informacion';
   public categories: Array<string> = ['Informacion', 'SubServicios', 'Chofer', 'Chat'];
@@ -30,7 +37,7 @@ export class CondServiSeguimiPage implements OnInit {
   states = DrawerState;
   minimumHeight = 52;
   servicio: any = {};
-  map: any;
+  // map: any;
   trackings: any = [];
   distance: String;
   duration: String;
@@ -43,6 +50,9 @@ export class CondServiSeguimiPage implements OnInit {
   latitude: any;
   longitude: any;
   markers: any[] = [];
+  estado: number = 1;
+  tracking: any;
+  coordenadas: any;
   constructor(private router: Router,
     public service: ServicioService,
     private activatedRoute: ActivatedRoute,
@@ -50,15 +60,18 @@ export class CondServiSeguimiPage implements OnInit {
     public alertController: AlertController,
     private geolocation: Geolocation,
     private launchNavigator: LaunchNavigator,
-    public platform: Platform
+    public platform: Platform,
+    private firebase: FirebaseService,
+    private storage: Storage
     // private nativeGeocoder: NativeGeocoder
   ) {
-    this.loadMap();
     console.log(this.activatedRoute.snapshot.paramMap.get('id'));
   }
 
   async ngOnInit() {
-    this.platform.ready().then(() => this.loadMap());
+    await this.platform.ready();
+    await this.loadMap();
+    await this.listar_servicio();
   }
 
   async listar_servicio() {
@@ -66,11 +79,11 @@ export class CondServiSeguimiPage implements OnInit {
       message: 'Espere por favor...'
     });
     await loading.present();
-    this.service.listar_servicio_id(this.activatedRoute.snapshot.paramMap.get('id')).subscribe((data => {
+    this.service.listar_tracking_id(this.activatedRoute.snapshot.paramMap.get('id')).subscribe((async data => {
       console.log(data);
       this.servicio = data;
       loading.dismiss();
-      this.trazar_ruta();
+      await this.trazar_ruta();
     }), error => {
       loading.dismiss();
       this.respuestaFail(error.error);
@@ -82,29 +95,48 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   btton_maps() {
+    // lat: this.coordenadas.coords.latitude,
+    // lng: this.coordenadas.coords.longitude,
     const options: LaunchNavigatorOptions = {
-      start: '' + this.latitude + ', ' + this.longitude + '',
+      start: '' + this.coordenadas.coords.latitude + ', ' + this.coordenadas.coords.longitude + '',
       app: this.launchNavigator.APP.GOOGLE_MAPS
     }
+    if (this.servicio.status === 1) {
+      this.launchNavigator.navigate(this.servicio.service.order.initPlace, options)
+        .then(
+          success => console.log('Launched navigator'),
+          error => console.log('Error launching navigator', error)
+        );
+    } else {
+      this.launchNavigator.navigate(this.servicio.service.order.endPlace, options)
+        .then(
+          success => console.log('Launched navigator'),
+          error => console.log('Error launching navigator', error)
+        );
+    }
 
-    this.launchNavigator.navigate(this.servicio.order.endPlace, options)
-      .then(
-        success => console.log('Launched navigator'),
-        error => console.log('Error launching navigator', error)
-      );
   }
 
   btton_waze() {
     const options: LaunchNavigatorOptions = {
-      start: '' + this.latitude + ', ' + this.longitude + '',
+      start: '' + this.coordenadas.coords.latitude + ', ' + this.coordenadas.coords.longitude + '',
       app: this.launchNavigator.APP.WAZE
     }
 
-    this.launchNavigator.navigate(this.servicio.order.endPlace, options)
-      .then(
-        success => console.log('Launched navigator'),
-        error => console.log('Error launching navigator', error)
-      );
+    if (this.servicio.status === 1) {
+      this.launchNavigator.navigate(this.servicio.service.order.initPlace, options)
+        .then(
+          success => console.log('Launched navigator'),
+          error => console.log('Error launching navigator', error)
+        );
+    } else {
+      this.launchNavigator.navigate(this.servicio.service.order.endPlace, options)
+        .then(
+          success => console.log('Launched navigator'),
+          error => console.log('Error launching navigator', error)
+        );
+    }
+
   }
 
   async AlertEmergencia() {
@@ -131,10 +163,10 @@ export class CondServiSeguimiPage implements OnInit {
     await alert.present();
   }
 
-  async AlertEstado() {
+  async AlertEstado(mensaje) {
     const alert = await this.alertController.create({
       header: 'Alerta',
-      message: 'Desea pasar a estado <strong>EN CAMINO</strong>',
+      message: 'Desea pasar a estado <strong>' + mensaje + '</strong>',
       backdropDismiss: false,
       buttons: [
         {
@@ -148,6 +180,7 @@ export class CondServiSeguimiPage implements OnInit {
           text: 'Si',
           handler: () => {
             console.log('Confirm Okay');
+            this.cambiar_estado();
           }
         }
       ]
@@ -155,102 +188,156 @@ export class CondServiSeguimiPage implements OnInit {
     await alert.present();
   }
 
+
+  async cambiar_estado() {
+    const loading = await this.loadingController.create({
+      message: 'Espere por favor...'
+    });
+    await loading.present();
+    if (this.servicio.status === 0) {
+      this.service.change_status(this.servicio._id).subscribe((data => {
+        console.log(data);
+        console.log(data.tracking);
+        this.servicio.status = data.tracking.status;
+        loading.dismiss();
+        this.respuestaOk(data.message);
+        this.addFirebase();
+      }), error => {
+        loading.dismiss();
+        this.respuestaFail(error.error);
+      });
+    } else {
+      this.service.change_status(this.servicio._id).subscribe((data => {
+        console.log(data);
+        console.log(data.tracking);
+        this.servicio.status = data.tracking.status;
+        loading.dismiss();
+        this.respuestaOk(data.message);
+      }), error => {
+        loading.dismiss();
+        this.respuestaFail(error.error);
+      });
+    }
+  }
+
+  addFirebase() {
+    this.tracking = {
+      driver: localStorage.getItem('id'),
+      location: {
+        lat: this.coordenadas.coords.latitude,
+        lng: this.coordenadas.coords.longitude,
+      },
+      status: this.servicio.status
+    };
+    this.firebase.addTracking(this.tracking).then((data) => {
+      localStorage.setItem('id_tracking', data.id);
+      // this.updateFirebase();
+    });
+
+  }
+
+  updateFirebase() {
+    if (localStorage.getItem('id_tracking')) {
+      const watch = this.geolocation.watchPosition();
+      watch.subscribe((data) => {
+        this.tracking = {
+          driver: localStorage.getItem('id'),
+          location: {
+            lat: data.coords.latitude,
+            lng: data.coords.longitude,
+          }
+        };
+        this.firebase.updateTracking(this.tracking, localStorage.getItem('id_tracking'));
+      });
+    } else {
+      console.log('No existe id');
+    }
+  }
+
   loadMap() {
-
-    
-
-
-    // this.geolocation.getCurrentPosition().then((resp) => {
-    //   this.latitude = resp.coords.latitude;
-    //   this.longitude = resp.coords.longitude;
-    //   console.log('' + resp.coords.latitude + ', ' + resp.coords.longitude + '');
-    //   console.log(resp.coords.latitude);
-    //   console.log(resp.coords.longitude);
-    //   const latLng = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-    //   const mapOptions = {
-    //     center: latLng,
-    //     zoom: 15,
-    //     mapTypeControl: false,
-    //     zoomControl: false,
-    //     streetViewControl: false,
-    //     fullscreenControl: false,
-    //     maxZoom: 15,
-    //     mapTypeId: google.maps.MapTypeId.ROADMAP
-    //   };
-    //   this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-    //   this.map.addListener('tilesloaded', () => {
-    //   });
-    //   this.directionsDisplay.setMap(this.map);
-    //   this.directionsDisplay.setOptions({
-    //     suppressMarkers: true, polylineOptions: {
-    //       // strokeWeight: 4,
-    //       // strokeOpacity: 4,
-    //       strokeColor: 'black'
-    //     }
-    //   });
-    // }).catch((error) => {
-    //   console.log('Error getting location', error);
-    // });
+    this.map = GoogleMaps.create('map_canvas', {
+      controls: {
+        compass: false,
+        myLocationButton: false,
+        myLocation: true,
+        indoorPicker: false,
+        mapToolbar: false
+      },
+      gestures: {
+        scroll: true,
+        tilt: true,
+        rotate: true,
+        zoom: true
+      },
+      camera: {
+        target: {
+          lat: -11.95872679,
+          lng: -77.0525224
+        },
+        zoom: 10
+      },
+      preferences: {
+        zoom: {
+          minZoom: 10,
+          maxZoom: 15
+        },
+      }
+    });
+    this.map.one(GoogleMapsEvent.MAP_READY).then(() => {
+      console.log('Map is ready!');
+      this.geolocation.getCurrentPosition().then((resp) => {
+        this.coordenadas = resp;
+        this.map.animateCamera({
+          target: {
+            lat: resp.coords.latitude,
+            lng: resp.coords.longitude
+          },
+          zoom: 15,
+          duration: 1000,
+        });
+        this.updateFirebase();
+      }).catch((error) => {
+        console.log('Error getting location', error);
+      });
+    });
   }
 
   addMarker(opcion) {
     let icons;
     let pos;
-    let title;
+    let titles;
     if (opcion === 1) {
       pos = {
-        lat: this.servicio.order.endLocation.coordinates[1],
-        lng: this.servicio.order.endLocation.coordinates[0],
+        lat: this.servicio.service.order.endLocation.coordinates[1],
+        lng: this.servicio.service.order.endLocation.coordinates[0],
       };
       icons = 'assets/img/llegada.png';
-      title = this.servicio.order.endPlace;
+      titles = this.servicio.service.order.endPlace;
     } else {
       pos = {
-        lat: this.servicio.order.initLocation.coordinates[1],
-        lng: this.servicio.order.initLocation.coordinates[0],
+        lat: this.servicio.service.order.initLocation.coordinates[1],
+        lng: this.servicio.service.order.initLocation.coordinates[0],
       };
       icons = 'assets/img/partida.png';
-      title = this.servicio.order.initPlace;
+      titles = this.servicio.service.order.initPlace;
     }
-    // console.log(this.map);
-
-    // console.log(pos);
-    const marker = new google.maps.Marker({
-      position: pos, // marker position
-      // map: this.map,
-      title: 'Hello World!',
+    const marker: MarkerOptions = {
+      position: new LatLng(pos.lat, pos.lng), // marker position
+      title: titles,
       icon: icons // custom image
-    });
-    // marker.clear();
-    marker.setMap(this.map);
-    // this.map.addMarker(marker);
-  }
-
-  addMarker_gps(coords) {
-    const pos = {
-      lat: coords.latitude,
-      lng: coords.longitude,
     };
-
-    // console.log(pos);
-    const marker = new google.maps.Marker({
-      position: pos, // marker position
-      // map: this.map,
-      title: 'Hello World!',
-      icon: 'assets/img/driver.png' // custom image
-    });
-    marker.setMap(null);
-    marker.setMap(this.map);
-    // this.map.addMarker(marker);
+    // marker.clear();
+    this.map.addMarker(marker);
   }
 
   async trazar_ruta() {
+    const flightPlanCoordinates = [];
     const loading = await this.loadingController.create({
       message: 'Dibujando ruta...',
     });
     await loading.present();
-    const star = this.servicio.order.initPlace;
-    const end = this.servicio.order.endPlace;
+    const star = this.servicio.service.order.initPlace;
+    const end = this.servicio.service.order.endPlace;
     this.directionsService.route({
       origin: star,
       destination: end,
@@ -258,22 +345,31 @@ export class CondServiSeguimiPage implements OnInit {
     }, (response, status) => {
       // console.log(response);
       if (status === 'OK') {
-        const watch = this.geolocation.watchPosition();
-        watch.subscribe((data) => {
-          console.log('watchPosition');
-          this.addMarker_gps(data.coords);
-          console.log(data);
-        });
+        // tslint:disable-next-line: prefer-for-of
+        for (let i = 0; i < response.routes[0].overview_path.length; i += 1) {
+          flightPlanCoordinates.push({
+            lat: response.routes[0].overview_path[i].lat(), lng: response.routes[0].overview_path[i].lng()
+          });
+        }
+        this.enrutar(flightPlanCoordinates);
+        loading.dismiss();
         this.addMarker(0);
         this.addMarker(1);
         this.duration = response.routes[0].legs[0].duration.text;
         this.distance = response.routes[0].legs[0].distance.text;
         this.directionsDisplay.setDirections(response);
-        loading.dismiss();
       } else {
-        loading.dismiss();
         alert('Petición de indicaciones fallidas debido a ' + status);
       }
+    });
+  }
+
+  enrutar(flightPlanCoordinates) {
+    this.map.addPolyline({
+      points: flightPlanCoordinates,
+      color: '#000000',
+      width: 3,
+      geodesic: true
     });
   }
 
@@ -297,6 +393,7 @@ export class CondServiSeguimiPage implements OnInit {
     // console.log(error);
     if (error.msg) {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: error.msg,
         buttons: ['OK']
@@ -304,12 +401,24 @@ export class CondServiSeguimiPage implements OnInit {
       await alert.present();
     } else {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: 'Falla al intentar comunicarse con el servidor',
         buttons: ['OK']
       });
       await alert.present();
     }
+  }
+
+  async respuestaOk(messages: any) {
+    // console.log(error);
+    const alert = await this.alertController.create({
+      backdropDismiss: false,
+      header: 'Exito',
+      message: messages,
+      buttons: ['OK']
+    });
+    await alert.present();
   }
 
   agregar_chofer(chofer) {
@@ -326,7 +435,4 @@ export class CondServiSeguimiPage implements OnInit {
     // console.log('disableDashScroll');
     this.disableDrag = true;
   }
-
-
-
 }

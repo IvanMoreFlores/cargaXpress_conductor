@@ -35,6 +35,14 @@ export class FirebaseService {
     return this.tracking;
   }
 
+  addTracking(tracking: Tracking) {
+    return this.trackingCollection.add(tracking);
+  }
+
+  updateTracking(tracking: Tracking, id: string) {
+    return this.trackingCollection.doc(id).update(tracking);
+  }
+
   // create_NewStudent(record: any) {
   //   return this.firestore.collection('trackings').add(record);
   // }

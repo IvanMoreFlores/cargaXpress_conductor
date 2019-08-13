@@ -20,7 +20,7 @@ export class CondHomePage implements OnInit {
   sin_datos: Boolean = true;
   con_datos: Boolean = false;
   cero_datos: Boolean = false;
-  servicios: any;
+  trackings: any;
   page: number;
   contador: number;
   @ViewChild(IonRouterOutlet, { static: false }) routerOutlet: IonRouterOutlet;
@@ -62,12 +62,12 @@ export class CondHomePage implements OnInit {
   }
 
   listarServicios() {
-    this.servicio.listar_servicios().subscribe((data => {
-      console.log(data.services.length);
-      console.log(data.services);
-      if (data.services.length > 0) {
+    this.servicio.listar_trackings().subscribe((data => {
+      console.log(data.trackings.length);
+      console.log(data.trackings);
+      if (data.trackings.length > 0) {
         this.page = data.page;
-        this.servicios = data.services;
+        this.trackings = data.trackings;
         this.con_datos = !this.con_datos;
         this.sin_datos = !this.sin_datos;
       } else {
@@ -89,12 +89,14 @@ export class CondHomePage implements OnInit {
     if (error.msg) {
       const alert = await this.alertController.create({
         header: 'Error',
+        backdropDismiss: false,
         message: error.msg,
         buttons: ['OK']
       });
       await alert.present();
     } else {
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         message: 'Falla al intentar comunicarse con el servidor',
         buttons: ['OK']
@@ -113,10 +115,10 @@ export class CondHomePage implements OnInit {
   }
 
   siguiente(event) {
-    this.servicio.listar_servicios_page(this.page + 1).subscribe((data => {
-      if (data.services.length > 0) {
+    this.servicio.listar_trackings_page(this.page + 1).subscribe((data => {
+      if (data.trackings.length > 0) {
         this.page = data.page;
-        this.servicios = this.servicios.concat(data.services);
+        this.trackings = this.trackings.concat(data.services);
         console.log(data.orders);
         event.target.complete();
       } else {

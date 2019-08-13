@@ -77,6 +77,7 @@ export class CondLoginPage {
     if (error.msg) {
       this.loadingController.dismiss();
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         subHeader: 'Datos erroneos',
         message: error.msg,
@@ -86,6 +87,7 @@ export class CondLoginPage {
     } else {
       this.loadingController.dismiss();
       const alert = await this.alertController.create({
+        backdropDismiss: false,
         header: 'Error',
         subHeader: 'Datos erroneos',
         message: error,
