@@ -5,7 +5,7 @@
 }
 ion-card {
   --background: white;
-  border-left: 5px solid #000000 !important;
+  // border-left: 5px solid #000000 !important;
 }
 
 #myScrollDiv {
@@ -28,4 +28,55 @@ div[scrollx="true"] {
 
 div[scrolly="true"] {
   overflow-y: auto;
+}
+
+ion-footer {
+  width: 100%;
+  bottom: 55px;
+  position: absolute;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);
+  background-color: #fff;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+  white-space: pre-wrap;
+}
+
+textarea:focus,
+input:focus {
+  outline: none;
+}
+
+.my-message {
+  background: var(--ion-color-tertiary);
+  color: #fff;
+}
+
+.other-message {
+  background: var(--ion-color-secondary);
+  color: #fff;
+}
+
+.time {
+  color: #dfdfdf;
+  float: right;
+  font-size: small;
+}
+
+.message-input {
+  width: 100%;
+  border: 1px solid var(--ion-color-medium);
+  border-radius: 10px;
+  background: #fff;
+  resize: none;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.msg-btn {
+  --padding-start: 0.5em;
+  --padding-end: 0.5em;
 }

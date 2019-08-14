@@ -16,6 +16,7 @@ import {
   MarkerOptions
 } from '@ionic-native/google-maps';
 import { Storage } from '@ionic/storage';
+import { Keyboard } from '@ionic-native/keyboard/ngx';
 
 declare var google: any;
 
@@ -28,7 +29,7 @@ export class CondServiSeguimiPage implements OnInit {
   map: GoogleMap;
   @ViewChild('map', { static: false }) mapElement: ElementRef;
   public category: String = 'Informacion';
-  public categories: Array<string> = ['Informacion', 'SubServicios', 'Chofer', 'Chat'];
+  public categories: Array<string> = ['Informacion', 'Chat'];
   shouldBounce = true;
   disableDrag = true;
   dockedHeight = 300;
@@ -42,6 +43,7 @@ export class CondServiSeguimiPage implements OnInit {
   distance: String;
   duration: String;
   botton: String = 'arrow-dropup';
+  isShown = false;
   // tslint:disable-next-line: new-parens
   directionsService = new google.maps.DirectionsService;
   // tslint:disable-next-line: new-parens
@@ -62,7 +64,8 @@ export class CondServiSeguimiPage implements OnInit {
     private launchNavigator: LaunchNavigator,
     public platform: Platform,
     private firebase: FirebaseService,
-    private storage: Storage
+    private storage: Storage,
+    private keyboard: Keyboard
     // private nativeGeocoder: NativeGeocoder
   ) {
     console.log(this.activatedRoute.snapshot.paramMap.get('id'));
@@ -72,6 +75,13 @@ export class CondServiSeguimiPage implements OnInit {
     await this.platform.ready();
     await this.loadMap();
     await this.listar_servicio();
+    // this.keyboard.onKeyboardShow().subscribe(() => {
+    //   this.isShown = true;
+    // });
+
+    // this.keyboard.onKeyboardWillHide().subscribe(() => {
+    //   this.isShown = false;
+    // });
   }
 
   async listar_servicio() {
@@ -101,7 +111,7 @@ export class CondServiSeguimiPage implements OnInit {
       start: '' + this.coordenadas.coords.latitude + ', ' + this.coordenadas.coords.longitude + '',
       app: this.launchNavigator.APP.GOOGLE_MAPS
     }
-    if (this.servicio.status === 1) {
+    if (this.servicio.processStatus === 1) {
       this.launchNavigator.navigate(this.servicio.service.order.initPlace, options)
         .then(
           success => console.log('Launched navigator'),
@@ -123,7 +133,7 @@ export class CondServiSeguimiPage implements OnInit {
       app: this.launchNavigator.APP.WAZE
     }
 
-    if (this.servicio.status === 1) {
+    if (this.servicio.processStatus === 1) {
       this.launchNavigator.navigate(this.servicio.service.order.initPlace, options)
         .then(
           success => console.log('Launched navigator'),
@@ -194,11 +204,9 @@ export class CondServiSeguimiPage implements OnInit {
       message: 'Espere por favor...'
     });
     await loading.present();
-    if (this.servicio.status === 0) {
+    if (this.servicio.processStatus === 0) {
       this.service.change_status(this.servicio._id).subscribe((data => {
-        console.log(data);
-        console.log(data.tracking);
-        this.servicio.status = data.tracking.status;
+        this.servicio.processStatus = data.tracking.processStatus;
         loading.dismiss();
         this.respuestaOk(data.message);
         this.addFirebase();
@@ -208,11 +216,13 @@ export class CondServiSeguimiPage implements OnInit {
       });
     } else {
       this.service.change_status(this.servicio._id).subscribe((data => {
-        console.log(data);
-        console.log(data.tracking);
-        this.servicio.status = data.tracking.status;
+        this.servicio.processStatus = data.tracking.processStatus;
         loading.dismiss();
         this.respuestaOk(data.message);
+        if (this.servicio.processStatus === 4) {
+          this.firebase.removeTracking(localStorage.getItem('id_tracking'));
+          localStorage.setItem('id_tracking', null);
+        }
       }), error => {
         loading.dismiss();
         this.respuestaFail(error.error);
@@ -227,17 +237,19 @@ export class CondServiSeguimiPage implements OnInit {
         lat: this.coordenadas.coords.latitude,
         lng: this.coordenadas.coords.longitude,
       },
-      status: this.servicio.status
+      status: this.servicio.processStatus
     };
     this.firebase.addTracking(this.tracking).then((data) => {
       localStorage.setItem('id_tracking', data.id);
-      // this.updateFirebase();
+      this.updateFirebase();
     });
 
   }
 
   updateFirebase() {
     if (localStorage.getItem('id_tracking')) {
+      console.log('Si existe id_tracking');
+      console.log(localStorage.getItem('id_tracking'));
       const watch = this.geolocation.watchPosition();
       watch.subscribe((data) => {
         this.tracking = {
@@ -250,7 +262,7 @@ export class CondServiSeguimiPage implements OnInit {
         this.firebase.updateTracking(this.tracking, localStorage.getItem('id_tracking'));
       });
     } else {
-      console.log('No existe id');
+      console.log('No existe id_tracking');
     }
   }
 
@@ -434,5 +446,12 @@ export class CondServiSeguimiPage implements OnInit {
   disableDashScroll() {
     // console.log('disableDashScroll');
     this.disableDrag = true;
+  }
+
+  listarChat() {
+    this.isShown = true;
+  }
+  listarInfo() {
+    this.isShown = false;
   }
 }

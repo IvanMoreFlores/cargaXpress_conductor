@@ -43,19 +43,7 @@ export class FirebaseService {
     return this.trackingCollection.doc(id).update(tracking);
   }
 
-  // create_NewStudent(record: any) {
-  //   return this.firestore.collection('trackings').add(record);
-  // }
-
-  // read_Students() {
-  //   return this.firestore.collection('trackings').snapshotChanges();
-  // }
-
-  // update_Student(recordID: any, record: any) {
-  //   this.firestore.doc('carga-express-test/' + recordID).update(record);
-  // }
-
-  // delete_Student(record_id: any) {
-  //   this.firestore.doc('carga-express-test/' + record_id).delete();
-  // }
+  removeTracking(id) {
+    return this.trackingCollection.doc(id).delete();
+  }
 }
