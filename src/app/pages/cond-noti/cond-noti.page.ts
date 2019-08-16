@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {  ModalController, IonRouterOutlet, Platform } from '@ionic/angular';
+import { ModalController, IonRouterOutlet, Platform } from '@ionic/angular';
 import { MenuController, NavController, AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { NotificacionService } from '../../services/notificacion/notificacion.service';
@@ -30,7 +30,8 @@ export class CondNotiPage implements OnInit {
     public alertController: AlertController,
     public modalController: ModalController,
     public toastController: ToastController,
-    public platform: Platform) { }
+    public platform: Platform,
+    public navCtrl :NavController) { }
 
   ngOnInit() {
     this.menu.swipeGesture(false, 'custom');
@@ -60,6 +61,7 @@ export class CondNotiPage implements OnInit {
   }
 
   async abrir_modal(notificacion: any) {
+    // this.platform.backButton.unsubscribe();
     // this._noti.leer_notificacion(notificacion._id).subscribe((async data => {
     //   if (notificacion.message === 'Han realizado una contraoferta.') {
     //     const modal = await this.modalController.create({
@@ -146,9 +148,17 @@ export class CondNotiPage implements OnInit {
           }
         });
       } else {
+        this.navCtrl.pop();
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
   }
+
+
+  // tslint:disable-next-line: use-lifecycle-interface
+  // ionViewWillLeave() {
+  //   // alert('ionViewWillLeave: cond-Notificaciones ');
+  //   this.platform.backButton.unsubscribe();
+  // }
 
 }

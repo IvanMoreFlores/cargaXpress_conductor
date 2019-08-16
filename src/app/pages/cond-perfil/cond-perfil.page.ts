@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, LoadingController } from '@ionic/angular';
+import { MenuController, LoadingController, NavController } from '@ionic/angular';
 import { AlertController, IonRouterOutlet, Platform } from '@ionic/angular';
 // import { ProfileService } from '../../services/profile/profile.service';
 import { PerfilService } from '../../services/perfil/perfil.service';
@@ -22,7 +22,8 @@ export class CondPerfilPage implements OnInit {
     public platform: Platform,
     public loadingController: LoadingController,
     public alertController: AlertController,
-    private router: Router) { }
+    private router: Router,
+    public navCtrl: NavController) { }
 
   ngOnInit() {
     this.menu.swipeGesture(false, 'custom');
@@ -50,6 +51,7 @@ export class CondPerfilPage implements OnInit {
   }
 
   edit_perfil(id: any) {
+    // this.platform.backButton.unsubscribe();
     console.log(id);
     this.router.navigate(['/edit-perfil', id]);
   }
@@ -80,9 +82,6 @@ export class CondPerfilPage implements OnInit {
       if (this.routerOutlet && this.routerOutlet.canGoBack()) {
         this.routerOutlet.pop();
       } else if (this.router.url === '/cond-tabs/Perfil') {
-        // this.cerrar();
-        // or if that doesn't work, try
-        // tslint:disable-next-line: no-string-literal
         this.menu.isOpen().then((data) => {
           console.log(data);
           if (data === true) {
@@ -92,10 +91,18 @@ export class CondPerfilPage implements OnInit {
           }
         });
       } else {
-        // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
+        this.navCtrl.pop();
+        // alert("ionViewDidEnter");
       }
     });
   }
+
+
+  // tslint:disable-next-line: use-lifecycle-interface
+  // ionViewWillLeave() {
+  //   // alert('ionViewWillLeave: cond-Perfil ');
+  //   this.platform.backButton.unsubscribe();
+  // }
 
 
 }

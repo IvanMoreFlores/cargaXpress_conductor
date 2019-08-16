@@ -34,7 +34,8 @@ export class CondLoginPage {
     public loadingController: LoadingController,
     public platform: Platform,
     public fb: FormBuilder,
-    private events: Events) {
+    private events: Events,
+    public navCtrl: NavController) {
     this.formularioUsuario = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -42,6 +43,7 @@ export class CondLoginPage {
   }
 
   recover() {
+    // this.platform.backButton.unsubscribe();
     this.router.navigateByUrl('/cond-recuperar');
   }
 
@@ -117,9 +119,15 @@ export class CondLoginPage {
         // tslint:disable-next-line: no-string-literal
         navigator['app'].exitApp();
       } else {
+        this.navCtrl.pop();
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
   }
+
+  // ionViewWillLeave() {
+  //   // alert('ionViewWillLeave: cond-login ');
+  //   this.platform.backButton.unsubscribe();
+  // }
 
 }

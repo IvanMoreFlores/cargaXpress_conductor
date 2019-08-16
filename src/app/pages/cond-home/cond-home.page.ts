@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { MenuController } from '@ionic/angular';
+import { MenuController, NavController } from '@ionic/angular';
 import { AlertController, Platform } from '@ionic/angular';
 import { ToastController, IonRouterOutlet } from '@ionic/angular';
 import { ServicioService } from '../../services/servicio/servicio.service';
@@ -32,7 +32,8 @@ export class CondHomePage implements OnInit {
     public servicio: ServicioService,
     public toastController: ToastController,
     public platform: Platform,
-    public events: Events) { }
+    public events: Events,
+    public navCtrl :NavController) { }
 
   ngOnInit() {
     // this.menu.enable(true, 'custom');
@@ -53,6 +54,8 @@ export class CondHomePage implements OnInit {
   }
 
   detalle_servicio(id) {
+    // alert('ionViewWillLeave: cond-tabs/Home ');
+    // this.platform.backButton.unsubscribe();
     this.router.navigate(['/cond-servi-detalle', id]);
   }
 
@@ -156,9 +159,16 @@ export class CondHomePage implements OnInit {
           }
         });
       } else {
+        this.navCtrl.pop();
         // this.generic.showAlert("Exit", "Do you want to exit the app?", this.onYesHandler, this.onNoHandler, "backPress");
       }
     });
   }
+
+  // // tslint:disable-next-line: use-lifecycle-interface
+  // ionViewWillLeave() {
+  //   // alert('ionViewWillLeave: cond-tabs/Home ');
+  //   this.platform.backButton.unsubscribe();
+  // }
 
 }

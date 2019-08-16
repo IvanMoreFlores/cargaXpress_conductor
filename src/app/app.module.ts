@@ -13,6 +13,8 @@ import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage';
 import { MenuComponent } from './components/menu/menu.component';
+import { SocialSharing } from '@ionic-native/social-sharing/ngx';
+import { File } from '@ionic-native/file/ngx';
 
 // Firebase
 import { AngularFireModule } from '@angular/fire';
@@ -37,6 +39,8 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
     StatusBar,
     SplashScreen,
     BackgroundMode,
+    SocialSharing,
+    File,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
   bootstrap: [AppComponent]
