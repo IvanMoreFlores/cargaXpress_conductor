@@ -131,21 +131,68 @@
 
     <div [ngSwitch]="category">
       <div *ngSwitchCase="'Chat'">
-        <div></div>
-        <ion-footer>
+        <div style='position:relative; top:0; right:0; bottom:0; left:0; overflow-y:scroll; overflow-x: hidden'>
+          <!-- <ion-scroll scrollY="true">
+                // your content here
+            </ion-scroll> -->
+          <ion-grid fixed>
+            <ion-row>
+              <ion-col size="6">
+                <ion-title>Cliente</ion-title>
+              </ion-col>
+              <ion-title>Tú</ion-title>
+            </ion-row>
+            <ion-row *ngFor="let item of list_mensaje">
+              <ion-grid fixed padding>
+                <ion-row *ngIf="item.owner !== id_owner">
+                  <ion-col size="6" style="background: #edf2fa;">
+                    <!-- <ion-badge *ngIf="ultimo.createdAt === item.createdAt" color="success">NUEVO</ion-badge> -->
+                    <ion-label style="font-size: 20px"><b>{{ item.message }}</b></ion-label><br>
+                    <ion-label style="font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
+                  </ion-col>
+                  <ion-col size="3"></ion-col>
+                  <ion-col size="3"></ion-col>
+                </ion-row>
+                <ion-row *ngIf="item.owner === id_owner">
+                  <ion-col size="3"></ion-col>
+                  <ion-col size="3"></ion-col>
+                  <ion-col size="6" style="background: #30205d">
+                    <!-- <ion-badge *ngIf="ultimo.createdAt === item.createdAt" color="success">NUEVO</ion-badge> -->
+                    <ion-label style="color: white;font-size: 20px">{{ item.message }}</ion-label><br>
+                    <ion-label style="color: white;font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
+            </ion-row>
+            <ion-row style="box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);background-color: #fff;" no-padding align-items-center>
+                <ion-col size="10">
+                  <textarea [(ngModel)]="mensaje" autosize class="message-input" maxRows="4"></textarea>
+                </ion-col>
+                <ion-col size="2">
+                  <ion-button (click)="enviarMensaje()" expand="block" fill="clear" color="primary" class="msg-btn">
+                    <ion-icon color="dark" name="ios-send" slot="icon-only"></ion-icon>
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+          </ion-grid>
+          <br>
+          <br>
+          <br>
+        </div>
+        <!-- <ion-footer>
           <ion-toolbar color="light">
             <ion-row no-padding align-items-center>
               <ion-col size="10">
-                <textarea autosize class="message-input" maxRows="4"></textarea>
+                <textarea [(ngModel)]="mensaje" autosize class="message-input" maxRows="4"></textarea>
               </ion-col>
               <ion-col size="2">
-                <ion-button expand="block" fill="clear" color="primary" class="msg-btn">
+                <ion-button (click)="enviarMensaje()" expand="block" fill="clear" color="primary" class="msg-btn">
                   <ion-icon color="dark" name="ios-send" slot="icon-only"></ion-icon>
                 </ion-button>
               </ion-col>
             </ion-row>
           </ion-toolbar>
-        </ion-footer>
+        </ion-footer> -->
       </div>
     </div>
 

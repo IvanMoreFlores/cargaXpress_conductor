@@ -9,6 +9,7 @@ import { FirebaseService } from '../../services/firebase/firebase.service';
 import { Subscription, from } from 'rxjs';
 import { Events } from '@ionic/angular';
 import { ViewChild, ElementRef } from '@angular/core';
+import { SocketService } from '../../services/socket/socket.service';
 
 @Component({
   selector: 'app-cond-home',
@@ -33,9 +34,11 @@ export class CondHomePage implements OnInit {
     public toastController: ToastController,
     public platform: Platform,
     public events: Events,
-    public navCtrl :NavController) { }
+    public navCtrl: NavController,
+    public socket: SocketService) { }
 
   ngOnInit() {
+    // this.socket.IniciarTokenSinLogin();
     // this.menu.enable(true, 'custom');
     // this.menu.open('custom');
     this.menu.swipeGesture(false, 'custom');
@@ -60,6 +63,7 @@ export class CondHomePage implements OnInit {
   }
 
   createUser() {
+    this.socket.chatSocket();
     console.log('User created! ' + localStorage.getItem('name'));
     this.events.publish('user:created', localStorage.getItem('name'), Date.now());
   }

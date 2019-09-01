@@ -12,15 +12,20 @@ ion-card {
   height: auto !important;
 }
 
-div[scrollx="true"],
-div[scrolly="true"] {
-  position: relative;
-  overflow: hidden;
-
-  ::-webkit-scrollbar {
-    display: none;
+div[scrolly="true"],
+div[scrollx="true"] {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+     display: none;
+  }
+   .scroll-item {
+     flex: 0 0 auto;
   }
 }
+
+
 
 div[scrollx="true"] {
   overflow-x: auto;
@@ -32,10 +37,14 @@ div[scrolly="true"] {
 
 ion-footer {
   width: 100%;
-  bottom: 55px;
-  position: absolute;
+  // bottom: 55px;
+  // position: absolute;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);
   background-color: #fff;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
 }
 
 .message {
@@ -79,4 +88,8 @@ input:focus {
 .msg-btn {
   --padding-start: 0.5em;
   --padding-end: 0.5em;
+}
+
+#myFixZone {
+  height: 800px;
 }
