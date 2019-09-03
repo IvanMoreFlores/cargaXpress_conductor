@@ -27,7 +27,7 @@ export class ChatService {
         Authorization: 'Bearer ' + localStorage.getItem('token')
       })
     };
-    return this.http.get(this.api_get_chat + idTranckig + '/chats', httpOptions)
+    return this.http.get(this.api_get_chat + idTranckig + '/chats?limit=1000&page=1', httpOptions)
       .pipe(map(
         results => results
       ));

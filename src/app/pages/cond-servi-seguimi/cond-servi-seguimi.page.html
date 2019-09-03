@@ -17,6 +17,9 @@
     <ion-icon name="megaphone"></ion-icon>
   </ion-fab-button>
 </ion-fab>
+
+
+
 <ion-bottom-drawer [disableDrag]="disableDrag" [(state)]="drawerState" [minimumHeight]="minimumHeight"
   [dockedHeight]="dockedHeight" [shouldBounce]="shouldBounce" [distanceTop]="distanceTop"
   (stateChange)="changedState($event)">
@@ -27,174 +30,96 @@
       <ion-icon slot="icon-only" color="light" [name]="botton"></ion-icon>
     </div>
 
-    <ion-toolbar>
-      <ion-segment color="dark" no-border-top [(ngModel)]="category" scrollable (ionChange)="segmentChanged($event)">
-        <ion-segment-button value="Informacion" checked (click)="listarInfo()">
-          Información
-        </ion-segment-button>
-        <ion-segment-button value="Chat" (click)="listarChat()">
-          Chat
-        </ion-segment-button>
-      </ion-segment>
-    </ion-toolbar>
-
-    <div [ngSwitch]="category">
-      <div *ngSwitchCase="'Informacion'">
-        <ion-card *ngIf="servicio?.service?.order" text-center>
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="12">
-                <ion-card-subtitle><b style="color: #222428">Punto de partida</b></ion-card-subtitle>
-              </ion-col>
-              <ion-col size="12">
-                <ion-card-subtitle>{{ servicio?.service?.order?.initPlace }}</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="12">
-                <ion-card-subtitle> <b style="color: #222428">Punto de llegada</b></ion-card-subtitle>
-              </ion-col>
-              <ion-col size="12">
-                <ion-card-subtitle>{{ servicio?.service?.order?.endPlace }}</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="12">
-                <ion-card-subtitle> <b style="color: #222428">Distancia aproximada</b></ion-card-subtitle>
-              </ion-col>
-              <ion-col size="12">
-                <ion-card-subtitle>{{ distance }}</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="12">
-                <ion-card-subtitle> <b style="color: #222428">Duracción aproximada</b></ion-card-subtitle>
-              </ion-col>
-              <ion-col size="12">
-                <ion-card-subtitle>{{ duration }}</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-            <ion-row>
-              <ion-col size="12">
-                <ion-card-subtitle> <b style="color: #222428">Estado del servicio</b></ion-card-subtitle>
-              </ion-col>
-              <ion-col size="12">
-                <ion-card-subtitle *ngIf="servicio?.processStatus === 0">En espera del conductor</ion-card-subtitle>
-                <ion-card-subtitle *ngIf="servicio?.processStatus === 1">En camino de recojer el pedido
-                </ion-card-subtitle>
-                <ion-card-subtitle *ngIf="servicio?.processStatus === 2">En proceso de envio</ion-card-subtitle>
-                <ion-card-subtitle *ngIf="servicio?.processStatus === 3">Dejando el pedido</ion-card-subtitle>
-                <ion-card-subtitle *ngIf="servicio?.processStatus === 4">Finalizado</ion-card-subtitle>
-              </ion-col>
-            </ion-row>
-            <ion-row *ngIf="servicio?.processStatus === 0">
-              <ion-col size="12">
-                <div>
-                  <ion-button (click)="AlertEstado('En camino de recojer el pedido')" expand="full" fill="solid"
-                    color="dark">Recoger el pedido
-                  </ion-button>
-                </div>
-              </ion-col>
-            </ion-row>
-            <ion-row *ngIf="servicio?.processStatus === 1">
-              <ion-col size="12">
-                <div>
-                  <ion-button *ngIf="servicio?.processStatus === 1" (click)="AlertEstado('En proceso de envio')"
-                    expand="full" fill="solid" color="dark">
-                    Proceso de envio
-                  </ion-button>
-                  <ion-button *ngIf="servicio?.processStatus === 2" (click)="AlertEstado('Dejando el pedido')"
-                    expand="full" fill="solid" color="dark">
-                    Dejando el pedido
-                  </ion-button>
-                  <ion-button *ngIf="servicio?.processStatus === 3" (click)="AlertEstado('Finalizado')" expand="full"
-                    fill="solid" color="dark">
-                    Finalizado
-                  </ion-button>
-                </div>
-                <div>
-                  <ion-button *ngIf="servicio?.processStatus === 1 || servicio?.processStatus === 2"
-                    (click)="btton_maps()" expand="full" fill="solid" color="success">Goole Maps
-                  </ion-button>
-                </div>
-                <div>
-                  <ion-button *ngIf="servicio?.processStatus === 1 || servicio?.processStatus === 2"
-                    (click)="btton_waze()" expand="full" fill="solid" color="primary">Waze
-                  </ion-button>
-                </div>
-              </ion-col>
-            </ion-row>
-          </ion-grid>
-        </ion-card>
-      </div>
-    </div>
-
-    <div [ngSwitch]="category">
-      <div *ngSwitchCase="'Chat'">
-        <div style='position:relative; top:0; right:0; bottom:0; left:0; overflow-y:scroll; overflow-x: hidden'>
-          <!-- <ion-scroll scrollY="true">
-                // your content here
-            </ion-scroll> -->
-          <ion-grid fixed>
-            <ion-row>
-              <ion-col size="6">
-                <ion-title>Cliente</ion-title>
-              </ion-col>
-              <ion-title>Tú</ion-title>
-            </ion-row>
-            <ion-row *ngFor="let item of list_mensaje">
-              <ion-grid fixed padding>
-                <ion-row *ngIf="item.owner !== id_owner">
-                  <ion-col size="6" style="background: #edf2fa;">
-                    <!-- <ion-badge *ngIf="ultimo.createdAt === item.createdAt" color="success">NUEVO</ion-badge> -->
-                    <ion-label style="font-size: 20px"><b>{{ item.message }}</b></ion-label><br>
-                    <ion-label style="font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
-                  </ion-col>
-                  <ion-col size="3"></ion-col>
-                  <ion-col size="3"></ion-col>
-                </ion-row>
-                <ion-row *ngIf="item.owner === id_owner">
-                  <ion-col size="3"></ion-col>
-                  <ion-col size="3"></ion-col>
-                  <ion-col size="6" style="background: #30205d">
-                    <!-- <ion-badge *ngIf="ultimo.createdAt === item.createdAt" color="success">NUEVO</ion-badge> -->
-                    <ion-label style="color: white;font-size: 20px">{{ item.message }}</ion-label><br>
-                    <ion-label style="color: white;font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
-                  </ion-col>
-                </ion-row>
-              </ion-grid>
-            </ion-row>
-            <ion-row style="box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);background-color: #fff;" no-padding align-items-center>
-                <ion-col size="10">
-                  <textarea [(ngModel)]="mensaje" autosize class="message-input" maxRows="4"></textarea>
-                </ion-col>
-                <ion-col size="2">
-                  <ion-button (click)="enviarMensaje()" expand="block" fill="clear" color="primary" class="msg-btn">
-                    <ion-icon color="dark" name="ios-send" slot="icon-only"></ion-icon>
-                  </ion-button>
-                </ion-col>
-              </ion-row>
-          </ion-grid>
-          <br>
-          <br>
-          <br>
+    <ion-card *ngIf="servicio?.service?.order" text-center>
+      <ion-grid fixed>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card-subtitle><b style="color: #222428">Punto de partida</b></ion-card-subtitle>
+          </ion-col>
+          <ion-col size="12">
+            <ion-card-subtitle>{{ servicio?.service?.order?.initPlace }}</ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card-subtitle> <b style="color: #222428">Punto de llegada</b></ion-card-subtitle>
+          </ion-col>
+          <ion-col size="12">
+            <ion-card-subtitle>{{ servicio?.service?.order?.endPlace }}</ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card-subtitle> <b style="color: #222428">Distancia aproximada</b></ion-card-subtitle>
+          </ion-col>
+          <ion-col size="12">
+            <ion-card-subtitle>{{ distance }}</ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card-subtitle> <b style="color: #222428">Duracción aproximada</b></ion-card-subtitle>
+          </ion-col>
+          <ion-col size="12">
+            <ion-card-subtitle>{{ duration }}</ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <ion-card-subtitle> <b style="color: #222428">Estado del servicio</b></ion-card-subtitle>
+          </ion-col>
+          <ion-col size="12">
+            <ion-card-subtitle *ngIf="servicio?.processStatus === 0">En espera del conductor</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="servicio?.processStatus === 1">En camino de recojer el pedido
+            </ion-card-subtitle>
+            <ion-card-subtitle *ngIf="servicio?.processStatus === 2">En proceso de envio</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="servicio?.processStatus === 3">Dejando el pedido</ion-card-subtitle>
+            <ion-card-subtitle *ngIf="servicio?.processStatus === 4">Finalizado</ion-card-subtitle>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="servicio?.processStatus === 0">
+          <ion-col size="12">
+            <div>
+              <ion-button (click)="AlertEstado('En camino de recojer el pedido')" expand="full" fill="solid"
+                color="dark">Recoger el pedido
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="servicio?.processStatus === 1">
+          <ion-col size="12">
+            <div>
+              <ion-button *ngIf="servicio?.processStatus === 1" (click)="AlertEstado('En proceso de envio')"
+                expand="full" fill="solid" color="dark">
+                Proceso de envio
+              </ion-button>
+              <ion-button *ngIf="servicio?.processStatus === 2" (click)="AlertEstado('Dejando el pedido')" expand="full"
+                fill="solid" color="dark">
+                Dejando el pedido
+              </ion-button>
+              <ion-button *ngIf="servicio?.processStatus === 3" (click)="AlertEstado('Finalizado')" expand="full"
+                fill="solid" color="dark">
+                Finalizado
+              </ion-button>
+            </div>
+            <div>
+              <ion-button *ngIf="servicio?.processStatus === 1 || servicio?.processStatus === 2" (click)="btton_maps()"
+                expand="full" fill="solid" color="success">Goole Maps
+              </ion-button>
+            </div>
+            <div>
+              <ion-button *ngIf="servicio?.processStatus === 1 || servicio?.processStatus === 2" (click)="btton_waze()"
+                expand="full" fill="solid" color="primary">Waze
+              </ion-button>
+            </div>
+          </ion-col>
+        </ion-row>
+        <div>
+          <ion-button (click)="btt_chat()" expand="full" fill="solid" color="favorite">Chat
+          </ion-button>
         </div>
-        <!-- <ion-footer>
-          <ion-toolbar color="light">
-            <ion-row no-padding align-items-center>
-              <ion-col size="10">
-                <textarea [(ngModel)]="mensaje" autosize class="message-input" maxRows="4"></textarea>
-              </ion-col>
-              <ion-col size="2">
-                <ion-button (click)="enviarMensaje()" expand="block" fill="clear" color="primary" class="msg-btn">
-                  <ion-icon color="dark" name="ios-send" slot="icon-only"></ion-icon>
-                </ion-button>
-              </ion-col>
-            </ion-row>
-          </ion-toolbar>
-        </ion-footer> -->
-      </div>
-    </div>
-
+      </ion-grid>
+    </ion-card>
   </div>
+
 </ion-bottom-drawer>

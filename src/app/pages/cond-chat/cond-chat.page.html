@@ -1,0 +1,67 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title color="light">Chat con el cliente</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cerrar()">
+        <ion-icon color="light" slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [scrollEvents]="true" (ionScroll)="onScroll($event)">
+  <ion-grid fixed>
+    <ion-row *ngFor="let item of list_mensaje">
+      <ion-grid fixed padding>
+        <ion-row *ngIf="item.owner._id !== id_owner">
+          <ion-col size="6" style="background: #edf2fa;">
+            <ion-label style="font-size: 20px"><b>{{ item.message }}</b></ion-label><br>
+            <ion-label style="font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
+          </ion-col>
+          <ion-col size="3">
+            <div class="chat content-center">{{devolver_letra(item.owner.name)}}</div>
+          </ion-col>
+          <ion-col size="3"></ion-col>
+        </ion-row>
+        <ion-row *ngIf="item.owner._id === id_owner">
+          <ion-col size="4"></ion-col>
+          <ion-col size="2">
+            <div class="chat content-center">{{devolver_letra(item.owner.name)}}</div>
+          </ion-col>
+          <ion-col size="6" style="background: #383a3e">
+            <ion-label style="color: white;font-size: 20px">{{ item.message }}</ion-label><br>
+            <ion-label style="color: white;font-size: 13px">{{devolver_fecha(item.createdAt)}}</ion-label>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-row>
+  </ion-grid>
+
+  <!-- fab placed to the bottom end -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="light" *ngIf="fatBootonDropup" (click)="ScrollToTop()">
+      <ion-icon name="arrow-dropup"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-button color="light" *ngIf="fatBootonDropdown" (click)="ScrollToBottom()">
+      <ion-icon name="arrow-dropdown"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+</ion-content>
+
+<ion-footer style="width: 100%;box-shadow: 0 0 4px rgba(0, 0, 0, 0.11);background-color: #fff;">
+  <ion-grid fixed>
+    <ion-row no-padding
+      align-items-center>
+      <ion-col size="10">
+        <textarea [(ngModel)]="mensaje" autosize class="message-input" maxRows="4"></textarea>
+      </ion-col>
+      <ion-col size="2">
+        <ion-button (click)="enviarMensaje()" expand="block" fill="clear" color="primary" class="msg-btn">
+          <ion-icon color="dark" name="ios-send" slot="icon-only"></ion-icon>
+        </ion-button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>

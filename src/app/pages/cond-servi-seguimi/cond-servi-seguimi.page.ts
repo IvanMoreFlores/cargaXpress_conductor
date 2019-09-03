@@ -17,9 +17,6 @@ import {
 } from '@ionic-native/google-maps';
 import { Storage } from '@ionic/storage';
 import { Keyboard } from '@ionic-native/keyboard/ngx';
-import { SocketService } from '../../services/socket/socket.service';
-import { Socket } from 'ngx-socket-io';
-import { ChatService } from '../../services/chat/chat.service';
 import * as moment from 'moment';
 
 declare var google: any;
@@ -38,7 +35,7 @@ export class CondServiSeguimiPage implements OnInit {
   disableDrag = true;
   dockedHeight = 300;
   distanceTop = 56;
-  drawerState = DrawerState.Bottom;
+  drawerState = DrawerState.Docked;
   states = DrawerState;
   minimumHeight = 52;
   servicio: any = {};
@@ -65,6 +62,7 @@ export class CondServiSeguimiPage implements OnInit {
   list_mensaje: any;
   mensaje_totales: any;
   id_owner;
+  footer: Boolean = false;
   constructor(private router: Router,
     public service: ServicioService,
     private activatedRoute: ActivatedRoute,
@@ -76,9 +74,6 @@ export class CondServiSeguimiPage implements OnInit {
     private firebase: FirebaseService,
     private storage: Storage,
     private keyboard: Keyboard,
-    private socket: Socket,
-    public socketS: SocketService,
-    public chat: ChatService
     // private nativeGeocoder: NativeGeocoder
   ) {
     this.id_owner = localStorage.getItem('id');
@@ -86,12 +81,9 @@ export class CondServiSeguimiPage implements OnInit {
   }
 
   async ngOnInit() {
-    await this.socketS.IniciarTokenSinLogin();
     await this.platform.ready();
     await this.loadMap();
     await this.listar_servicio();
-    await this.socketS.conectarTrackigSocket(this.activatedRoute.snapshot.paramMap.get('id'));
-    await this.chatSocket();
     // this.keyboard.onKeyboardShow().subscribe(() => {
     //   this.isShown = true;
     // });
@@ -99,21 +91,6 @@ export class CondServiSeguimiPage implements OnInit {
     // this.keyboard.onKeyboardWillHide().subscribe(() => {
     //   this.isShown = false;
     // });
-  }
-
-  chatSocket() {
-    this.socket.on('NEW_MESSAGE', (data) => {
-      if (data) {
-        // return Promise reject(err);
-        console.log('data chatSocket : ' + data);
-        console.log(data);
-        this.list_mensaje.push(data.message);
-        // this.list_mensaje.push(data.messages)
-      } else {
-        console.log('Mal chatSocket');
-        // return Promise resolve();
-      }
-    });
   }
 
   async listar_servicio() {
@@ -134,6 +111,10 @@ export class CondServiSeguimiPage implements OnInit {
 
   segmentChanged(ev: any) {
     this.category = ev.detail.value;
+  }
+
+  btt_chat() {
+    this.router.navigate(['/cond-chat', this.activatedRoute.snapshot.paramMap.get('id')]);
   }
 
   btton_maps() {
@@ -480,38 +461,17 @@ export class CondServiSeguimiPage implements OnInit {
     this.disableDrag = true;
   }
 
-  listarChat() {
+  esconder_fab() {
+    this.footer = true;
     this.isShown = true;
-    this.chat.get_chat(this.activatedRoute.snapshot.paramMap.get('id')).subscribe((data => {
-      console.log(data);
-      this.list_mensaje = data.messages;
-    }));
   }
 
   devolver_fecha(fecha: any) {
     return (moment(fecha).format('DD-MM-YYYY, h:mm:ss a'));
   }
 
-  enviarMensaje() {
-    this.enviarChatSocket(this.activatedRoute.snapshot.paramMap.get('id'), this.mensaje);
-  }
-
-  enviarChatSocket(id, message) {
-    this.socket.emit('NEW_MESSAGE', { trackingId: id, data: { message } }, (err, data) => {
-      if (err) {
-        // return Promise reject(err);
-        console.log('error enviarChatSocket : ' + err);
-      } else {
-        this.mensaje = '';
-        console.log('Bien enviarChatSocket');
-        console.log(data);
-        this.list_mensaje.push(data.message);
-        // return Promise resolve();
-      }
-    });
-  }
-
   listarInfo() {
     this.isShown = false;
+    this.footer = false;
   }
 }

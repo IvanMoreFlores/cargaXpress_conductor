@@ -12,6 +12,8 @@ const routes: Routes = [
   { path: 'cond-splash', loadChildren: './pages/cond-splash/cond-splash.module#CondSplashPageModule' },
   { path: 'cond-servi-detalle/:id', loadChildren: './pages/cond-servi-detalle/cond-servi-detalle.module#CondServiDetallePageModule' },
   { path: 'cond-servi-seguimi/:id', loadChildren: './pages/cond-servi-seguimi/cond-servi-seguimi.module#CondServiSeguimiPageModule' },
+  { path: 'cond-chat/:id', loadChildren: './pages/cond-chat/cond-chat.module#CondChatPageModule' },
+
 ];
 
 @NgModule({
